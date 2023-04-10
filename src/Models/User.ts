@@ -4,10 +4,7 @@ import * as z from 'zod';
 export const userSchema = z.object({
 	name: z
 		.string()
-		.min(3, { message: 'Nome deve ter pelo menos 3 caracteres' })
-		.regex(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/, {
-			message: 'Nome inválido',
-		}),
+		.min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
 	email: z.string().email({ message: 'E-mail inválido' }),
 	password: z
 		.string()
@@ -31,12 +28,12 @@ class User {
 	private _name: string;
 	private _email: string | undefined;
 	private _password: string | undefined;
-	private _avatar?: string;
+	private _avatar?: string | null;
 
 	constructor(name: string, email: string, password: string, avatar?: string) {
 		this._name = name;
-		this.email = email;
-		this.password = password;
+		this._email = email;
+		this._password = password;
 		this._avatar = avatar;
 	}
 
@@ -95,14 +92,14 @@ class User {
 		this.setPassword(password);
 	}
 
-	get avatar(): string | undefined {
-		return this._avatar;
+	get avatar(): string | null {
+		return this._avatar ?? null;
 	}
 
-	set avatar(avatar: string | undefined) {
+	set avatar(avatar: string | null) {
         const avatarSchema = userSchema.pick({ avatar: true });
 		avatarSchema.parse({ avatar }); 
-		this._avatar = avatar;
+		this._avatar = avatar ?? null;
 	}
 }
 
