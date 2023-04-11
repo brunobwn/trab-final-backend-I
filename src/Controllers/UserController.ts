@@ -2,6 +2,7 @@ import {  Request, Response } from 'express';
 import User, { userSchema } from '../Models/User';
 import { UserRepository } from '../Repositories/UserRepository';
 import errorHandler from '../middlewares/errorHandler';
+import { NotFoundError } from '../Helpers/api-errors';
 
 class UserController {
 	private repository = new UserRepository();
@@ -23,26 +24,25 @@ class UserController {
 		}
 	}
 
-	get(req: Request, res: Response) {
+	async get(req: Request, res: Response) {
 		try {
-			const { name, email, password, avatar } = userSchema.parse(req.body);
-
-			const user = new User(name, email, password);
-			if (avatar) {
-				user.avatar = avatar;
+			if(req.params.id) {
+				const user = this.repository.find(req.params.id);
+				if(!user) throw new NotFoundError('Usuário não encontrado');
+				return res.json(user.toObject());
 			}
-			console.log(this.repository);
 
-			this.repository.create(user);
-			return res.status(201).json(user);
+			const users = this.repository.findAll();
+			return res.json(users.map(user => user.toObject()));
+			
 		} catch (err) {
 			errorHandler(err, req, res);
 		}
 	}
 
-	update(req: Request, res: Response) {}
+	async update(req: Request, res: Response) {}
 
-	delete(req: Request, res: Response) {}
+	async delete(req: Request, res: Response) {}
 }
 
 export default UserController;

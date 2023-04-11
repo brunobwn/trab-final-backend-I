@@ -5,7 +5,7 @@ interface IUserRepository {
     create: (user:User) => void;
     edit: (user:User) => void;
     find: (id:string) => User | undefined;
-    all: () => User[];
+    findAll: () => User[];
 }
 
 class UserRepository implements IUserRepository{
@@ -17,14 +17,10 @@ class UserRepository implements IUserRepository{
 
     private seed(): void {
         const usuariosSeed = [
-            new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://pps.whatsapp.net/v/t61.24694-24/306790408_527825505836062_7301371845119804315_n.jpg')
+            new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://avatars.githubusercontent.com/u/108753181?v=4')
         ];
         usuariosSeed.forEach(u => this.create(u));
     }
-
-    public all(): User[] {
-        return this.users
-    };
     
     public create(user:User): void {
         const userExistente = this.users.find(u => u.email === user.email);
@@ -39,8 +35,12 @@ class UserRepository implements IUserRepository{
         this.users.splice(currentIndex, 1, user);
     }
 
-    public find(id:string): User | undefined {
+    public find(id:string) {
         return this.users.find(user => user.id === id);
+    }
+
+    public findAll(): User[] {
+        return this.users;
     }
 }
 
