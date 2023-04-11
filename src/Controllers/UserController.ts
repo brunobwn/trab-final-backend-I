@@ -1,21 +1,21 @@
 import {  Request, Response } from 'express';
 import User, { userSchema } from '../Models/User';
-import { UserRepository } from '../Repositories/UserRepository';
+import { IUserRepository, UserRepository } from '../Repositories/UserRepository';
 import errorHandler from '../middlewares/errorHandler';
 import { NotFoundError } from '../Helpers/api-errors';
 
 class UserController {
-	private repository = new UserRepository();
+	private repository: IUserRepository;
+
+	constructor(repository:IUserRepository) {
+		this.repository = repository;
+	}
 
 	async create(req: Request, res: Response) {
 		try {
 			const { name, email, password, avatar } = userSchema.parse(req.body);
 
-			const user = new User(name, email, password);
-			if (avatar) {
-				user.avatar = avatar;
-			}
-			console.log(this.repository);
+			const user = new User({name, email, password, avatar: avatar ?? null});
 
 			this.repository.create(user);
 			return res.status(201).json(user.toObject());
@@ -34,7 +34,7 @@ class UserController {
 
 			const users = this.repository.findAll();
 			return res.json(users.map(user => user.toObject()));
-			
+
 		} catch (err) {
 			errorHandler(err, req, res);
 		}

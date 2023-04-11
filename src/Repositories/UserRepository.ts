@@ -17,7 +17,19 @@ class UserRepository implements IUserRepository{
 
     private seed(): void {
         const usuariosSeed = [
-            new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://avatars.githubusercontent.com/u/108753181?v=4')
+            new User({
+                name:'Bruno Berwian', 
+                email:'brunoberwian@gmail.com', 
+                password:'abc123', 
+                avatar:'https://avatars.githubusercontent.com/u/108753181?v=4', 
+                role: 'admin'
+            }),
+            new User({
+                name:'Ana Banana', 
+                email:'anabanana@gmail.com', 
+                password:'abc123', 
+                avatar:'https://media.discordapp.net/attachments/1090782906974212149/1095173364034834562/Bruno_Berwian_ana_banana_3799c2d7-0c89-4004-bd07-c0a204553370.png', 
+            }),
         ];
         usuariosSeed.forEach(u => this.create(u));
     }
