@@ -18,19 +18,23 @@ export const userSchema = z.object({
 		.regex(/\.(jpeg|jpg|gif|png)$/, {
 			message: 'Avatar deve ser um arquivo de imagem válido',
 		})
-        .optional(),
+		.optional()
+        .nullable(),
 });
 
 type UserSchema = z.infer<typeof userSchema>;
+interface UserResource extends Omit<UserSchema, 'password'>  {
+	id:string
+}
 
 class User {
     private _id:string = crypto.randomUUID();
 	private _name: string;
 	private _email: string | undefined;
 	private _password: string | undefined;
-	private _avatar?: string | null;
+	private _avatar: string | null;
 
-	constructor(name: string, email: string, password: string, avatar?: string) {
+	constructor(name: string, email: string, password: string, avatar: string | null = null) {
 		this._name = name;
 		this._email = email;
 		this._password = password;
@@ -61,6 +65,15 @@ class User {
 		};
 		return userSchema.parse(user);
 	}
+
+	toObject(): UserResource {
+		return {
+			id: this.id,
+			name: this.name,
+			email: this.email,
+			avatar: this.avatar,
+		}
+	}
     
     get id(): string {
         return this._id;
@@ -77,7 +90,7 @@ class User {
 	}
 
 	get email(): string{
-		return this._email ?? '';
+		return this._email!;
 	}
 
 	set email(email: string) {

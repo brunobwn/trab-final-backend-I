@@ -1,12 +1,29 @@
-import { Request, Response } from 'express';
-import * as z from 'zod';
+import {  Request, Response } from 'express';
 import User, { userSchema } from '../Models/User';
 import { UserRepository } from '../Repositories/UserRepository';
+import errorHandler from '../middlewares/errorHandler';
 
 class UserController {
 	private repository = new UserRepository();
 
-	public async create(req: Request, res: Response) {
+	async create(req: Request, res: Response) {
+		try {
+			const { name, email, password, avatar } = userSchema.parse(req.body);
+
+			const user = new User(name, email, password);
+			if (avatar) {
+				user.avatar = avatar;
+			}
+			console.log(this.repository);
+
+			this.repository.create(user);
+			return res.status(201).json(user.toObject());
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
+	}
+
+	get(req: Request, res: Response) {
 		try {
 			const { name, email, password, avatar } = userSchema.parse(req.body);
 
@@ -18,26 +35,14 @@ class UserController {
 
 			this.repository.create(user);
 			return res.status(201).json(user);
-		} catch (error) {
-            console.log(error);
-			if(error instanceof z.ZodError) {
-				return res.status(400).json({ message: error.issues });
-			}
-			if(error instanceof Error) {
-				return res.status(400).json({ message: error.message });
-			}
-			return res.status(500).json({ message: 'Internal server error'  });
-        }
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
 	}
 
-	public async get(req: Request, res: Response) {
-	}
+	update(req: Request, res: Response) {}
 
-	public async update(req: Request, res: Response): Promise<void> {
-	}
-
-	public async delete(req: Request, res: Response): Promise<void> {
-	}
+	delete(req: Request, res: Response) {}
 }
 
 export default UserController;

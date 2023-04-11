@@ -1,3 +1,4 @@
+import { ConflictError } from "../Helpers/api-errors";
 import User from "../Models/User";
 interface IUserRepository {
     users: User[];
@@ -15,7 +16,10 @@ class UserRepository implements IUserRepository{
     }
 
     private seed(): void {
-        this.create(new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://pps.whatsapp.net/v/t61.24694-24/306790408_527825505836062_7301371845119804315_n.jpg'));
+        const usuariosSeed = [
+            new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://pps.whatsapp.net/v/t61.24694-24/306790408_527825505836062_7301371845119804315_n.jpg')
+        ];
+        usuariosSeed.forEach(u => this.create(u));
     }
 
     public all(): User[] {
@@ -25,7 +29,7 @@ class UserRepository implements IUserRepository{
     public create(user:User): void {
         const userExistente = this.users.find(u => u.email === user.email);
         if(userExistente) {
-            throw new Error('User already exists');
+            throw new ConflictError('Um usuário já está utilizando esse email!');
         }
         this.users.push(user);
     }

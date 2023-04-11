@@ -1,15 +1,15 @@
-import { UserRepository } from './Repositories/UserRepository';
-import express from 'express';
+import express, { Request, Response } from 'express';
+import 'express-async-errors';
 import { usersRoutes } from './Routes/users.routes';
-import User from './Models/User';
+import errorHandler from './middlewares/errorHandler';
 
-const api = express();
+const app = express();
 
-api.use([express.json()]);
+app.use(express.json());
 
-api.use('/users', usersRoutes);
+app.use('/users', usersRoutes);
 
-api.listen(8080, () => console.log('Server online em: http://localhost:8080'));
+app.listen(8080, () => console.log('Server online em: http://localhost:8080'));
 
 
-export default api;
+export default app;
