@@ -10,11 +10,23 @@ interface IUserRepository {
 class UserRepository implements IUserRepository{
     public users: User[] = [];
 
+    constructor() {
+        this.seed();
+    }
+
+    private seed(): void {
+        this.create(new User('Bruno Berwian', 'brunoberwian@gmail.com', 'abc123', 'https://pps.whatsapp.net/v/t61.24694-24/306790408_527825505836062_7301371845119804315_n.jpg'));
+    }
+
     public all(): User[] {
         return this.users
     };
     
     public create(user:User): void {
+        const userExistente = this.users.find(u => u.email === user.email);
+        if(userExistente) {
+            throw new Error('User already exists');
+        }
         this.users.push(user);
     }
 
