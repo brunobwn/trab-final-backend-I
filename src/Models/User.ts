@@ -34,20 +34,18 @@ type UserConstructorType ={
 }
 class User {
     private _id:string = crypto.randomUUID();
-	private _name: string | undefined;
-	private _email: string | undefined;
-	private _password: string | undefined;
-	private _avatar: string | null;
-	private _role: 'admin' | 'user';
+	private _name: string = '';
+	private _email: string = '';
+	private _password: string = '';
+	private _avatar: string | null = null;
+	private _role: 'admin' | 'user' = 'user';
 
-	constructor({name, email, password, avatar = null,role = 'user'}:UserConstructorType) {
+	constructor({name, email, password, avatar, role}:UserConstructorType) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.avatar = avatar;
-
-		if(role !== 'admin' && role !== 'user') throw new Error('Tipo de usuário inválido!');
-		this._role = role;
+		if(avatar) this.avatar = avatar;
+		if(role) this.role = role;
 	}
 
 	setPassword(password: string): void {
@@ -94,6 +92,7 @@ class User {
 	}
 
 	set role(role: 'admin' | 'user') {
+		if(role !== 'admin' && role !== 'user') throw new Error('Tipo de usuário inválido!');
 		this._role = role;
 	}
     
