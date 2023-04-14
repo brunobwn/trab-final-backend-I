@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 
-function errorHandler(err:any) {
+function errorHandler(err:any, req: Request, res: Response) {
 	if (err instanceof z.ZodError) {
 		const issues = err.issues.map((issue) => ({ path: issue.path[0], message: issue.message }));
 		return res.status(400).json(issues);
