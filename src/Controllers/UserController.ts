@@ -1,8 +1,8 @@
 import {  Request, Response } from 'express';
 import User, { userSchema } from '../Models/User';
-import { IUserRepository, UserRepository } from '../Repositories/UserRepository';
+import { IUserRepository } from '../Repositories/User/UserRepository';
 import errorHandler from '../middlewares/errorHandler';
-import { NotFoundError } from '../Helpers/api-errors';
+import { BadRequestError, NotFoundError } from '../Helpers/api-errors';
 
 class UserController {
 	private repository: IUserRepository;
@@ -40,9 +40,61 @@ class UserController {
 		}
 	}
 
-	async update(req: Request, res: Response) {}
+	async update(req: Request, res: Response) {
+		try {
+			if(!req.params.id) {
+				throw new BadRequestError('Obrigatório informar o ID do usuário!');
+			}
 
-	async delete(req: Request, res: Response) {}
+			const user = this.repository.find(req.params.id);
+			if(!user) {
+				throw new NotFoundError('Usuário não encontrado');
+			}
+
+			for (const [key, value] of Object.entries(req.body)) {
+				switch (key) {
+				  case 'name':
+					user.name = value as string;
+					break;
+				  case 'email':
+					user.email = value as string;
+					break;
+				  case 'password':
+					user.password = value as string;
+					break;
+				  case 'avatar':
+					user.avatar = value as string;
+					break;
+				  case 'role':
+					// TODO: Check if auth user is admin
+					user.role = value as 'admin' | 'user';
+					break;
+				  default:
+					throw new BadRequestError(`Propriedade inválida: ${key}`);
+				}
+			}
+
+			this.repository.edit(user);
+			return res.sendStatus(204);
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
+	}
+
+	async delete(req: Request, res: Response) {
+		try {
+			if(!req.params.id) {
+				throw new BadRequestError('Obrigatório informar o ID do usuário!');
+			}
+			const userDeleted = this.repository.delete(req.params.id);
+			if(!userDeleted) {
+				throw new NotFoundError('Usuário não encontrado');
+			}
+			return res.sendStatus(204);
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
+	}
 }
 
 export default UserController;

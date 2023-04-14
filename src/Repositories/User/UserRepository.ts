@@ -1,12 +1,6 @@
-import { ConflictError } from "../Helpers/api-errors";
-import User from "../Models/User";
-interface IUserRepository {
-    users: User[];
-    create: (user:User) => void;
-    edit: (user:User) => void;
-    find: (id:string) => User | undefined;
-    findAll: () => User[];
-}
+import { ConflictError } from "../../Helpers/api-errors";
+import User from "../../Models/User";
+import { IUserRepository } from "./IUserRepository";
 
 class UserRepository implements IUserRepository{
     public users: User[] = [];
@@ -53,6 +47,13 @@ class UserRepository implements IUserRepository{
 
     public findAll(): User[] {
         return this.users;
+    }
+
+    public delete(id:string): boolean {
+        const currentIndex = this.users.map(e => e.id).indexOf(id);
+        if(currentIndex === -1) return false;
+        this.users.splice(currentIndex, 1);
+        return true;
     }
 }
 

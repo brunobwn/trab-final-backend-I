@@ -19,7 +19,7 @@ export const userSchema = z.object({
         .nullable(),
 });
 
-type UserSchema = z.infer<typeof userSchema>;
+export type UserSchema = z.infer<typeof userSchema>;
 interface UserResource extends Omit<UserSchema, 'password'>  {
 	id:string,
 	role: 'admin' | 'user';
@@ -32,6 +32,7 @@ type UserConstructorType ={
 	avatar: string | null;
 	role?: 'admin' | 'user';
 }
+
 class User {
     private _id:string = crypto.randomUUID();
 	private _name: string = '';
@@ -87,10 +88,6 @@ class User {
 		return this._role === 'admin';
 	}
 
-	get is_user(): boolean {
-		return this._role === 'user';
-	}
-
 	set role(role: 'admin' | 'user') {
 		if(role !== 'admin' && role !== 'user') throw new Error('Tipo de usuário inválido!');
 		this._role = role;
@@ -134,6 +131,15 @@ class User {
         const avatarSchema = userSchema.pick({ avatar: true });
 		avatarSchema.parse({ avatar }); 
 		this._avatar = avatar;
+	}
+
+	*[Symbol.iterator]() {
+		const props = Object.entries(this).filter(([key, value]) => {
+		  return !key.startsWith("_") && typeof value !== "function" || ['password', 'is_admin'].includes(key);
+		});
+		for (const [key, value] of props) {
+		  yield [key, value];
+		}
 	}
 }
 
