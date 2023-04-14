@@ -20,7 +20,7 @@ class UserController {
 			this.repository.create(user);
 			return res.status(201).json(user.toObject());
 		} catch (err) {
-			errorHandler(err, req, res);
+			errorHandler(err);
 		}
 	}
 
@@ -36,7 +36,7 @@ class UserController {
 			return res.json(users.map(user => user.toObject()));
 
 		} catch (err) {
-			errorHandler(err, req, res);
+			errorHandler(err);
 		}
 	}
 
@@ -77,7 +77,7 @@ class UserController {
 			this.repository.edit(user);
 			return res.sendStatus(204);
 		} catch (err) {
-			errorHandler(err, req, res);
+			errorHandler(err);
 		}
 	}
 
@@ -92,7 +92,7 @@ class UserController {
 			}
 			return res.sendStatus(204);
 		} catch (err) {
-			errorHandler(err, req, res);
+			errorHandler(err);
 		}
 	}
 }
