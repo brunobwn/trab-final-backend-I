@@ -6,4 +6,5 @@ export interface IMessageRepository {
     edit: (user:Message) => void;
     find: (id:string) => Message | undefined;
     getAllByUser: (userId:string) => Message[];
+    delete: (id:string) => boolean;
 }

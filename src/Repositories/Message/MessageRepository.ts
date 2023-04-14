@@ -28,6 +28,13 @@ class MessageRepository implements IMessageRepository{
     public getAllByUser(userId:string): Message[] {
         return this.messages.filter(message => message.userId === userId) ?? [];
     }
+
+    public delete(id:string): boolean {
+        const currentIndex = this.messages.map(e => e.id).indexOf(id);
+        if(currentIndex === -1) return false;
+        this.messages.splice(currentIndex, 1);
+        return true;
+    }
 }
 
 export { MessageRepository }

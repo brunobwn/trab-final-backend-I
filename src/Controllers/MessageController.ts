@@ -59,12 +59,12 @@ class MessageController {
 
 	async delete(req: Request, res: Response) {
 		try {
-			if(!req.params.id) {
-				throw new BadRequestError('Obrigatório informar o ID do usuário!');
+			if(!req.params.messageId) {
+				throw new BadRequestError('Obrigatório informar o ID da mensagem!');
 			}
-			const userDeleted = this.repository.delete(req.params.id);
-			if(!userDeleted) {
-				throw new NotFoundError('Usuário não encontrado');
+			const messageDeleted = this.repository.delete(req.params.messageId);
+			if(!messageDeleted) {
+				throw new NotFoundError('Mensagem não encontrada');
 			}
 			return res.sendStatus(204);
 		} catch (err) {
