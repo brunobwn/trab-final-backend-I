@@ -1,15 +1,15 @@
 import { Router } from "express";
-import UserController from "../Controllers/UserController";
-import { UserRepository } from "../Repositories/User/UserRepository";
+import { MessageRepository } from "../Repositories/Message/MessageRepository";
+import MessageController from "../Controllers/MessageController";
 
-const usersRoutes = Router();
+const messagesRoutes = Router({ mergeParams: true });
 
-const usersRepo = new UserRepository();
-const userController = new UserController(usersRepo);
+const messagesRepo = new MessageRepository();
+const messageController = new MessageController(messagesRepo);
 
-usersRoutes.get('/:id?', (req, res) => userController.get(req,res));
-usersRoutes.post('/', (req, res) => userController.create(req,res));
-usersRoutes.put('/:id', (req, res) => userController.update(req,res));
-usersRoutes.delete('/:id', (req, res) => userController.delete(req,res));
+messagesRoutes.get('/', (req, res) => messageController.get(req,res));
+messagesRoutes.post('/', (req, res) => messageController.create(req,res));
+messagesRoutes.put('/', (req, res) => messageController.update(req,res));
+messagesRoutes.delete('/', (req, res) => messageController.delete(req,res));
 
-export { usersRoutes };
+export { messagesRoutes };

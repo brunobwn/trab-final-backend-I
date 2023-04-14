@@ -5,5 +5,5 @@ export interface IMessageRepository {
     create: (user:Message) => void;
     edit: (user:Message) => void;
     find: (id:string) => Message | undefined;
-    findAllByUser: (userId:string) => Message[];
+    getAllByUser: (userId:string) => Message[];
 }

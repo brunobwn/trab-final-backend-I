@@ -4,7 +4,7 @@ import { UserRepository } from "../Repositories/User/UserRepository";
 
 const usersRoutes = Router();
 
-const usersRepo = new UserRepository();
+export const usersRepo = new UserRepository();
 const userController = new UserController(usersRepo);
 
 usersRoutes.get('/:id?', (req, res) => userController.get(req,res));

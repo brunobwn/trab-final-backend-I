@@ -9,6 +9,7 @@ class MessageRepository implements IMessageRepository{
     }
 
     private seed(): void {
+        // TODO: Implementar seed?
     }
     
     public create(user:Message): void {
@@ -24,7 +25,7 @@ class MessageRepository implements IMessageRepository{
         return this.messages.find(message => message.id === id);
     }
 
-    public findAllByUser(userId:string): Message[] {
+    public getAllByUser(userId:string): Message[] {
         return this.messages.filter(message => message.userId === userId) ?? [];
     }
 }
