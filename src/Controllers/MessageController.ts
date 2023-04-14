@@ -34,39 +34,23 @@ class MessageController {
 
 	async update(req: Request, res: Response) {
 		try {
-			if(!req.params.id) {
-				throw new BadRequestError('Obrigatório informar o ID do usuário!');
-			}
+            const { id, subject, text, is_active } = req.body;
 
-			const user = this.repository.find(req.params.id);
-			if(!user) {
-				throw new NotFoundError('Usuário não encontrado');
-			}
+            const message = this.repository.find(id);
+            if(!message) {
+                throw new NotFoundError('Mensagem não encontrada');
+            }
+			if(subject) {
+                message.subject = subject;
+            }
+            if(text) {
+                message.text = text;
+            }
+            if(is_active) {
+                message.is_active = is_active;
+            }
 
-			for (const [key, value] of Object.entries(req.body)) {
-				switch (key) {
-				  case 'name':
-					user.name = value as string;
-					break;
-				  case 'email':
-					user.email = value as string;
-					break;
-				  case 'password':
-					user.password = value as string;
-					break;
-				  case 'avatar':
-					user.avatar = value as string;
-					break;
-				  case 'role':
-					// TODO: Check if auth user is admin
-					user.role = value as 'admin' | 'user';
-					break;
-				  default:
-					throw new BadRequestError(`Propriedade inválida: ${key}`);
-				}
-			}
-
-			this.repository.edit(user);
+			this.repository.edit(message);
 			return res.sendStatus(204);
 		} catch (err) {
 			errorHandler(err, req, res);
