@@ -2,7 +2,7 @@ import {  Request, Response } from 'express';
 import errorHandler from '../middlewares/errorHandler';
 import { BadRequestError, NotFoundError } from '../Helpers/api-errors';
 import { IMessageRepository } from '../Repositories/Message/IMessageRepository';
-import Message, { messageSchema } from '../Models/Message';
+import Message from '../Models/Message';
 
 class MessageController {
 	private repository: IMessageRepository;
@@ -24,7 +24,26 @@ class MessageController {
 
 	async get(req: Request, res: Response) {
 		try {
-			const messages = this.repository.getAllByUser(req.params.userId);
+			let messages = this.repository.getAllByUser(req.params.userId);
+			if (req.query.active) {
+				const status = req.query.active;
+				if (status === 'true') {
+					messages = messages.filter(message => message.is_active);
+				} else if (status === 'false') {
+					messages = messages.filter(message => !message.is_active);
+				} else {
+					throw new BadRequestError('O parâmetro "active" deve ser "true" ou "false"');
+				}
+			}
+			if(req.query.search) {
+				const search = String(req.query.search).toLowerCase();
+				messages = messages.filter(message => {
+					if(message.subject.toLowerCase().includes(search)) return true;
+					if(message.text.toLowerCase().includes(search)) return true;
+					return false;
+				});
+			}
+
 			return res.json(messages.map(message => message.toObject()));
 
 		} catch (err) {
@@ -34,9 +53,9 @@ class MessageController {
 
 	async update(req: Request, res: Response) {
 		try {
-            const { id, subject, text, is_active } = req.body;
-
-            const message = this.repository.find(id);
+            const { subject, text, is_active } = req.body;
+			const { messageId } = req.params;
+            const message = this.repository.find(messageId);
             if(!message) {
                 throw new NotFoundError('Mensagem não encontrada');
             }
