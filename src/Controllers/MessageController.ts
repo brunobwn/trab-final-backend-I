@@ -90,6 +90,22 @@ class MessageController {
 			errorHandler(err, req, res);
 		}
 	}
+
+	async toggleStatus(req: Request, res: Response) {
+		try {
+			const { messageId } = req.params;
+            const message = this.repository.find(messageId);
+            if(!message) {
+                throw new NotFoundError('Mensagem não encontrada');
+            }
+			message.is_active = !message.is_active;
+
+			this.repository.edit(message);
+			return res.sendStatus(204);
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
+	}
 }
 
 export default MessageController;
