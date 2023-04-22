@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { UnauthorizedError } from '../Helpers/api-errors';
 import { usersRepo } from '../Routes/users.routes';
 import errorHandler from '../middlewares/errorHandler';
+import User, { userSchema } from '../Models/User';
 
 export class AuthController {
 	async login(req: Request, res: Response) {
@@ -29,4 +30,23 @@ export class AuthController {
 			errorHandler(err, req, res);
 		}
 	}
+
+    async register(req: Request, res: Response) {
+        try {
+			const { name, email, password, avatar } = userSchema.parse(req.body);
+
+			const user = new User({name, email, password, avatar: avatar ?? null});
+
+			usersRepo.create(user);
+            
+            const payload = { id: user.id, name: user.name, email: user.email };
+            const token = jwt.sign(payload, process.env.JWT_SECRET || 'MUDAR_SECRET', {
+                expiresIn: '1d',
+            });
+
+            return res.status(201).json({ user: user.toObject(), token });
+		} catch (err) {
+			errorHandler(err, req, res);
+		}
+    }
 }
