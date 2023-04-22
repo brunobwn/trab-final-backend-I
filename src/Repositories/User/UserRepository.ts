@@ -13,7 +13,7 @@ class UserRepository implements IUserRepository{
         const usuariosSeed = [
             new User({
                 name:'Bruno Berwian', 
-                email:'brunoberwian@gmail.com', 
+                email:'bruno@teste.com', 
                 password:'abc123', 
                 avatar:'https://avatars.githubusercontent.com/u/108753181?v=4', 
                 role: 'admin'

@@ -5,10 +5,11 @@ import { checkUserId } from './middlewares/checkUserId';
 import { messagesRoutes } from './Routes/messages.routes';
 import { authRoutes } from './Routes/auth.routes';
 import { authMiddleware } from './middlewares/AuthMiddleware';
+import cors from 'cors';
 
 const app = express();
 
-app.use(express.json());
+app.use([express.json(), cors()]);
 
 // Rotas Publicas
 app.use('/auth', authRoutes);
