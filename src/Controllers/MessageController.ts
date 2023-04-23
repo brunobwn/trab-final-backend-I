@@ -43,7 +43,7 @@ class MessageController {
 					return false;
 				});
 			}
-
+			messages = messages.sort((a, b) => b.edited_at.getTime() - a.edited_at.getTime())
 			return res.json(messages.map(message => message.toObject()));
 
 		} catch (err) {
