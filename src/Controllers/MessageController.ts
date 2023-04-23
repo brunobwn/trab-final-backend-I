@@ -99,7 +99,6 @@ class MessageController {
                 throw new NotFoundError('Mensagem não encontrada');
             }
 			message.is_active = !message.is_active;
-			console.log('editando mensagem ' + message.id + ' para o status ' + message.is_active);
 			this.repository.edit(message);
 			return res.sendStatus(204);
 		} catch (err) {
