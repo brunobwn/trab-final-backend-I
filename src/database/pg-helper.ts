@@ -1,10 +1,10 @@
 import { DataSource, QueryRunner } from 'typeorm';
-import config from './ormconfig';
+import { dataSource } from './typeorm';
 
 export const pgHelper = {
 	client: null as unknown as DataSource,
 	async connect(): Promise<void> {
-		this.client = new DataSource(config);
+		this.client = dataSource;
 		await this.client.initialize();
 	},
 	async disconnect(): Promise<void> {

@@ -7,7 +7,10 @@
     "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
     "dev:debug": "ts-node-dev --inspect --respawn --transpile-only ./src/server.ts",
     "build": "tsc",
-    "start": "node ./dist/server.js"
+    "start": "node ./dist/server.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "npm run typeorm -- migration:run -d src/database/typeorm.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/database/typeorm.ts"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +22,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
+    "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
