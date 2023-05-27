@@ -6,6 +6,7 @@ import { messagesRoutes } from './Routes/messages.routes';
 import { authRoutes } from './Routes/auth.routes';
 import { authMiddleware } from './middlewares/AuthMiddleware';
 import cors from 'cors';
+import { pgHelper } from './database/pg-helper';
 
 const app = express();
 
@@ -18,7 +19,10 @@ app.use('/auth', authRoutes);
 app.use('/users', authMiddleware, usersRoutes);
 app.use('/user/:userId/messages', authMiddleware, checkUserId, messagesRoutes);
 
-app.listen(8080, () => console.log('Server online em: http://localhost:8080'));
+pgHelper.connect()
+    .then(() => {
+        app.listen(8080, () => console.log('Server online em: http://localhost:8080'));
+    }).catch(err => console.log(err));
 
 
 export default app;
