@@ -30,3 +30,15 @@ export class ConflictError extends ApiError {
 		super(message, 409);
 	}
 }
+
+interface errors {
+	property: string;
+	constraints: string[];
+}
+export class ValidationError extends ApiError {
+	public errors: errors[];
+	constructor(errors: errors[]) {
+		super('Erro de validação', 400);
+		this.errors = errors;
+	}
+}

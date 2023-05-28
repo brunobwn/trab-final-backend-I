@@ -75,7 +75,7 @@ class UserController {
 				}
 			}
 
-			this.repository.edit(user);
+			await this.repository.edit(user);
 			return res.sendStatus(204);
 		} catch (err) {
 			errorHandler(err, req, res);

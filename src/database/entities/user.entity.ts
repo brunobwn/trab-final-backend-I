@@ -1,7 +1,8 @@
 import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import crypto from 'crypto';
-import { IsNotEmpty, MinLength, Matches, IsEmail, IsUrl, isURL } from 'class-validator';
+import { IsNotEmpty, MinLength, Matches, IsEmail, IsUrl, validate, ValidateIf } from 'class-validator';
 import { MessageEntity } from './messages.entity';
+import { ValidationError } from '../../Helpers/api-errors';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
@@ -22,6 +23,7 @@ export class UserEntity extends BaseEntity {
 	password!: string;
 
 	@Column({ type: 'varchar', nullable: true, default: null })
+    @ValidateIf((o) => o.avatar)
     @IsUrl()
 	avatar!: string | null;
 
@@ -37,23 +39,31 @@ export class UserEntity extends BaseEntity {
     @OneToMany(() => MessageEntity, (message) => message.user)
 	messages!: MessageEntity[];
 
-    @BeforeInsert()
-    setCreatedAt() {
-        this.created_at = new Date();
-    }
-
     @BeforeUpdate()
-    setUpdatedAt() {
-        this.updated_at = new Date();
-    }
-
     @BeforeInsert()
-    @BeforeUpdate()
-    hashPassword() {
-        if(this.password) {
+    async validateAndHashPassword() {
+        await this.validate();
+        if(this.password && !this.password.includes(':')) {
             const salt = crypto.randomBytes(16).toString('hex');
             const hash = crypto.pbkdf2Sync(this.password, salt, 1000, 64, 'sha512').toString('hex');
             this.password = `${salt}:${hash}`;
         }
+    }
+    
+    async validate() {
+        const errors = await validate(this);
+        if (errors.length > 0) {
+            throw new ValidationError(errors.map(e => ({property: e.property, constraints: Object.values(e.constraints ?? {})})))
+        }
+    }
+
+    @BeforeInsert()
+    async setCreatedAt() {
+        this.created_at = new Date();
+    }
+
+    @BeforeUpdate()
+    async setUpdatedAt() {
+        this.updated_at = new Date();
     }
 }

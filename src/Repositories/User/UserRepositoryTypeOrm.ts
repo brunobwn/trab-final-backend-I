@@ -1,8 +1,9 @@
 import { IUserRepository } from './IUserRepository';
-import { ConflictError } from "../../Helpers/api-errors";
+import { BadRequestError, ConflictError, ValidationError } from "../../Helpers/api-errors";
 import { dataSource } from "../../database/typeorm";
 import { UserEntity } from "../../database/entities/user.entity";
 import User from "../../Models/User";
+import { validate } from 'class-validator';
 
 class UserRepositoryTypeOrm implements IUserRepository {
     public repository = dataSource.getRepository(UserEntity);
@@ -22,7 +23,7 @@ class UserRepositoryTypeOrm implements IUserRepository {
         entity.password = user.password;
         entity.role = user.role;
         entity.avatar = user.avatar;
-
+        // await entity.validate();
         const savedUser = await this.repository.save(entity);
         return savedUser.id;
     }
@@ -35,8 +36,8 @@ class UserRepositoryTypeOrm implements IUserRepository {
         entity.password = user.password;
         entity.role = user.role;
         entity.avatar = user.avatar;
-        entity.save();
-        return this.repository.save(user);
+        // await entity.validate();
+        return await this.repository.save(entity);
     }
 
     public async find(id:string) {

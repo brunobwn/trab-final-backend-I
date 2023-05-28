@@ -35,8 +35,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 			}
 		});
 
+		next();
 	} catch (err) {
 		errorHandler(err, req, res);
 	}
-	next();
 };
