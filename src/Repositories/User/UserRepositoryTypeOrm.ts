@@ -8,8 +8,7 @@ import { validate } from 'class-validator';
 class UserRepositoryTypeOrm implements IUserRepository {
     public repository = dataSource.getRepository(UserEntity);
 
-    constructor() {
-    }
+    constructor() {}
     
     public async create(user:User) {
         const userExistente = await this.findByEmail(user.email);
@@ -83,7 +82,7 @@ class UserRepositoryTypeOrm implements IUserRepository {
     }
 
     public async delete(id:string) {
-        this.repository.delete({id});
+        await this.repository.delete({id});
     }
 }
 

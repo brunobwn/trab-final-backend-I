@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { MessageRepository } from "../Repositories/Message/MessageRepository";
 import MessageController from "../Controllers/MessageController";
+import { MessageRepositoryTypeOrm } from "../Repositories/Message/MessageRepositoryTypeOrm";
 
 const messagesRoutes = Router({ mergeParams: true });
 
-const messagesRepo = new MessageRepository();
+const messagesRepo = new MessageRepositoryTypeOrm();
 const messageController = new MessageController(messagesRepo);
 
 messagesRoutes.get('/', (req, res) => messageController.get(req,res));
 messagesRoutes.post('/', (req, res) => messageController.create(req,res));
 messagesRoutes.patch('/:messageId?', (req, res) => messageController.update(req,res));
-messagesRoutes.patch('/:messageId?/toggle', (req, res) => messageController.toggleStatus(req,res));
+messagesRoutes.patch('/:messageId?/archive', (req, res) => messageController.archive(req,res));
+messagesRoutes.patch('/:messageId?/unarchive', (req, res) => messageController.unarchive(req,res));
 messagesRoutes.delete('/:messageId?', (req, res) => messageController.delete(req,res));
 
 export { messagesRoutes, messagesRepo };

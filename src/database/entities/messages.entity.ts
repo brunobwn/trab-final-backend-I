@@ -15,6 +15,9 @@ export class MessageEntity extends BaseEntity {
 	@Column({ type: 'boolean', nullable: false, default: true})
 	is_active: boolean = true;
 
+    @Column({ nullable: false })
+    user_id!: string;
+    
     @ManyToOne(() => UserEntity, (user) => user.messages)
     @JoinColumn({ name: 'user_id' })
 	user!: UserEntity;
