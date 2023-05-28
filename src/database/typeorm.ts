@@ -7,7 +7,7 @@ const config: DataSourceOptions = {
 	type: 'postgres',
 	url: process.env.DATABASE_URL,
     entities: [UserEntity, MessageEntity],
-    migrations: ["src/database/migrations/**/*"],
+    migrations: ["./dist/database/migrations/*.js"],
 	synchronize: false,
 	logging: false,
 	ssl: {
