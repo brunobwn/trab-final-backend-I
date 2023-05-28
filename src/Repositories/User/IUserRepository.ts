@@ -1,11 +1,13 @@
+import { Repository } from "typeorm";
+import { UserEntity } from "../../database/entities/user.entity";
 import User from "../../Models/User";
 
 export interface IUserRepository {
-    users: User[];
-    create: (user:User) => void;
+    repository: Repository<UserEntity>;
+    create: (user:User) => Promise<string>;
     edit: (user:User) => void;
-    find: (id:string) => User | undefined;
-    findByEmail: (email:string) => User | undefined;
-    findAll: () => User[];
-    delete: (id:string) => boolean;
+    find: (id:string) => Promise<User | null>;
+    findByEmail: (email:string) => Promise<User | null>;
+    findAll: () => Promise<User[]>;
+    delete: (id:string) => Promise<void>;
 }

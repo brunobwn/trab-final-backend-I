@@ -1,8 +1,8 @@
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'messages' })
-export class Message extends BaseEntity {
+export class MessageEntity extends BaseEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
 
@@ -15,9 +15,9 @@ export class Message extends BaseEntity {
 	@Column({ type: 'boolean', nullable: false, default: true})
 	is_active: boolean = true;
 
-    @ManyToOne(() => User, (user) => user.messages)
+    @ManyToOne(() => UserEntity, (user) => user.messages)
     @JoinColumn({ name: 'user_id' })
-	user!: User;
+	user!: UserEntity;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;

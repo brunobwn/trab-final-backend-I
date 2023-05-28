@@ -22,37 +22,40 @@ export const userSchema = z.object({
 export type UserSchema = z.infer<typeof userSchema>;
 interface UserResource extends Omit<UserSchema, 'password'>  {
 	id:string,
-	role: 'admin' | 'user';
+	role: string;
 }
 
 type UserConstructorType ={
 	name: string;
 	email: string;
 	password: string;
-	avatar: string | null;
-	role?: 'admin' | 'user';
+	avatar?: string | null;
+	id?: string | undefined;
+	role?: string;
 }
 
 class User {
-    private _id:string = crypto.randomUUID();
+    public id:string;
 	private _name: string = '';
 	private _email: string = '';
 	private _password: string = '';
 	private _avatar: string | null = null;
-	private _role: 'admin' | 'user' = 'user';
+	private _role: string = 'user';
 
-	constructor({name, email, password, avatar, role}:UserConstructorType) {
+	constructor({name, email, password, avatar, role, id}:UserConstructorType) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
+		this.id = (id) ? id : '';
 		if(avatar) this.avatar = avatar;
 		if(role) this.role = role;
 	}
 
 	setPassword(password: string): void {
-		const salt = crypto.randomBytes(16).toString('hex');
-		const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-		this._password = `${salt}:${hash}`;
+		// const salt = crypto.randomBytes(16).toString('hex');
+		// const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+		// this._password = `${salt}:${hash}`;
+		this._password = password;
 	}
 
 	checkPassword(password: string): boolean {
@@ -88,14 +91,10 @@ class User {
 		return this._role === 'admin';
 	}
 
-	set role(role: 'admin' | 'user') {
+	set role(role: string) {
 		if(role !== 'admin' && role !== 'user') throw new Error('Tipo de usuário inválido!');
 		this._role = role;
 	}
-    
-    get id(): string {
-        return this._id;
-    }
 
 	get name(): string {
 		return this._name;
@@ -118,9 +117,13 @@ class User {
 	}
 
 	set password(password: string) {
-		const passwordSchema = userSchema.pick({ password: true });
-		passwordSchema.parse({ password }); 
+		// const passwordSchema = userSchema.pick({ password: true });
+		// passwordSchema.parse({ password }); 
 		this.setPassword(password);
+	}
+
+	get password(): string {
+		return this._password;
 	}
 
 	get avatar(): string | null {

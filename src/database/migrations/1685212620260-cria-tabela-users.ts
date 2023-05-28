@@ -43,7 +43,7 @@ export class criaTabelaUsers1685212620260 implements MigrationInterface {
                   name: 'role',
                   type: 'varchar',
                   length: '10',
-                  default: "user",
+                  default: "'user'",
                   isNullable: false
                 },
                 {

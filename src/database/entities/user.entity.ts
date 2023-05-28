@@ -1,32 +1,32 @@
 import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import crypto from 'crypto';
-import { IsNotEmpty, MinLength, Matches, IsEmail, IsUrl } from 'class-validator';
-import { Message } from './messages.entity';
+import { IsNotEmpty, MinLength, Matches, IsEmail, IsUrl, isURL } from 'class-validator';
+import { MessageEntity } from './messages.entity';
 
 @Entity({ name: 'users' })
-export class User extends BaseEntity {
+export class UserEntity extends BaseEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string;
 
-	@Column({ length: 100, nullable: false })
+	@Column({ type: 'varchar', length: 100, nullable: false })
 	name!: string;
 
-	@Column({ length: 255, nullable: false, unique: true })
+	@Column({ type: 'varchar', length: 255, nullable: false, unique: true })
     @IsEmail()
 	email!: string;
 
-	@Column({ length: 255, nullable: false, select: false })
+	@Column({ type: 'varchar', length: 255, nullable: false })
     @IsNotEmpty()
     @MinLength(6)
     @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/)
 	password!: string;
 
-	@Column({ nullable: true })
+	@Column({ type: 'varchar', nullable: true, default: null })
     @IsUrl()
-	avatar: string | null = null;
+	avatar!: string | null;
 
-	@Column({ length: 10, default: 'user' })
-	role: 'admin' | 'user' = 'user';
+	@Column({ default: "'user'", type: 'varchar', length: 10 })
+	role!: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;
@@ -34,8 +34,8 @@ export class User extends BaseEntity {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updated_at!: Date;
 
-    @OneToMany(() => Message, (message) => message.user)
-	messages: Message[] = [];
+    @OneToMany(() => MessageEntity, (message) => message.user)
+	messages!: MessageEntity[];
 
     @BeforeInsert()
     setCreatedAt() {

@@ -7,10 +7,11 @@ import { authRoutes } from './Routes/auth.routes';
 import { authMiddleware } from './middlewares/AuthMiddleware';
 import cors from 'cors';
 import { pgHelper } from './database/pg-helper';
+import { requestLogger } from './middlewares/requestLogger';
 
 const app = express();
 
-app.use([express.json(), cors()]);
+app.use([express.json(), cors(), requestLogger]);
 
 // Rotas Publicas
 app.use('/auth', authRoutes);

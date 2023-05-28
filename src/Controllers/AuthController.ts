@@ -5,13 +5,14 @@ import { UnauthorizedError } from '../Helpers/api-errors';
 import { usersRepo } from '../Routes/users.routes';
 import errorHandler from '../middlewares/errorHandler';
 import User, { userSchema } from '../Models/User';
+import { ConflictError } from '../Helpers/api-errors';
 
 export class AuthController {
 	async login(req: Request, res: Response) {
         try {
 			const { email, password } = req.body;
 
-            const user = usersRepo.findByEmail(email);
+            const user = await usersRepo.findByEmail(email);
             if (!user) {
                 throw new UnauthorizedError('E-mail ou senha inválidos');
             }
@@ -35,12 +36,14 @@ export class AuthController {
         try {
 			const { name, email, password, avatar } = userSchema.parse(req.body);
 
-			const user = new User({name, email, password, avatar: avatar ?? null});
-
-			usersRepo.create(user);
+            const existsUser = await usersRepo.findByEmail(email);
+            if (existsUser) {
+                throw new ConflictError('E-mail já cadastrado');
+            }
+			const user = new User({name, email, password, avatar});
+			user.id = await usersRepo.create(user);
             
-            const payload = { id: user.id, name: user.name, email: user.email };
-            const token = jwt.sign(payload, process.env.JWT_SECRET || 'MUDAR_SECRET', {
+            const token = jwt.sign(user.toObject(), process.env.JWT_SECRET || 'MUDAR_SECRET', {
                 expiresIn: '1d',
             });
 

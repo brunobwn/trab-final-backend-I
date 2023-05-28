@@ -6,6 +6,7 @@ export class criaRelationsUsersMessages1685216999854 implements MigrationInterfa
 		await queryRunner.createForeignKey(
 			'messages',
 			new TableForeignKey({
+				name: 'FK_messages_user',
 				columnNames: ['user_id'],
 				referencedTableName: 'users',
 				referencedColumnNames: ['id'],
@@ -15,7 +16,7 @@ export class criaRelationsUsersMessages1685216999854 implements MigrationInterfa
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.dropForeignKey('post', 'FK_post_user');
+		await queryRunner.dropForeignKey('messages', 'FK_messages_user');
 	}
     
 }

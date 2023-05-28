@@ -1,8 +1,8 @@
 import {  Request, Response } from 'express';
 import User, { userSchema } from '../Models/User';
-import { IUserRepository } from '../Repositories/User/UserRepository';
 import errorHandler from '../middlewares/errorHandler';
 import { BadRequestError, NotFoundError } from '../Helpers/api-errors';
+import { IUserRepository } from '../Repositories/User/IUserRepository';
 
 class UserController {
 	private repository: IUserRepository;
@@ -17,7 +17,8 @@ class UserController {
 
 			const user = new User({name, email, password, avatar: avatar ?? null});
 
-			this.repository.create(user);
+			const id = await this.repository.create(user);
+			user.id = id;
 			return res.status(201).json(user.toObject());
 		} catch (err) {
 			errorHandler(err, req, res);
@@ -27,12 +28,12 @@ class UserController {
 	async get(req: Request, res: Response) {
 		try {
 			if(req.params.id) {
-				const user = this.repository.find(req.params.id);
+				const user = await this.repository.find(req.params.id);
 				if(!user) throw new NotFoundError('Usuário não encontrado');
 				return res.json(user.toObject());
 			}
 
-			const users = this.repository.findAll();
+			const users = await this.repository.findAll();
 			return res.json(users.map(user => user.toObject()));
 
 		} catch (err) {
@@ -46,7 +47,7 @@ class UserController {
 				throw new BadRequestError('Obrigatório informar o ID do usuário!');
 			}
 
-			const user = this.repository.find(req.params.id);
+			const user = await this.repository.find(req.params.id);
 			if(!user) {
 				throw new NotFoundError('Usuário não encontrado');
 			}
@@ -86,10 +87,7 @@ class UserController {
 			if(!req.params.id) {
 				throw new BadRequestError('Obrigatório informar o ID do usuário!');
 			}
-			const userDeleted = this.repository.delete(req.params.id);
-			if(!userDeleted) {
-				throw new NotFoundError('Usuário não encontrado');
-			}
+			await this.repository.delete(req.params.id);
 			return res.sendStatus(204);
 		} catch (err) {
 			errorHandler(err, req, res);

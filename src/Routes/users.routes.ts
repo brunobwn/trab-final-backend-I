@@ -1,10 +1,10 @@
 import { Router } from "express";
 import UserController from "../Controllers/UserController";
-import { UserRepository } from "../Repositories/User/UserRepository";
+import { UserRepositoryTypeOrm } from "../Repositories/User/UserRepositoryTypeOrm";
 
 const usersRoutes = Router();
 
-const usersRepo = new UserRepository();
+const usersRepo = new UserRepositoryTypeOrm();
 const userController = new UserController(usersRepo);
 
 usersRoutes.get('/:id?', (req, res) => userController.get(req,res));
