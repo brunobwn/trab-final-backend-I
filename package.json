@@ -2,15 +2,15 @@
   "name": "trab-final-backend-i",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/main/server/server.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-    "dev:debug": "ts-node-dev --inspect --respawn --transpile-only ./src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only ./src/main/server/server.ts",
+    "dev:debug": "ts-node-dev --inspect --respawn --transpile-only ./src/main/server/server.ts",
     "build": "tsc",
-    "start": "node ./dist/server.js",
+    "start": "node ./dist/main/server/server.js",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:run": "npm run typeorm -- migration:run -d src/database/typeorm.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -d src/database/typeorm.ts"
+    "migration:run": "npm run typeorm -- migration:run -d src/main/config/typeorm.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d src/main/config/typeorm.ts"
   },
   "author": "",
   "license": "ISC",
